@@ -37,8 +37,13 @@ response = client.get_users_mentions(id=user_id,expansions='author_id',max_resul
 #print(mentions)
 
 #print(client.get_users_followers(user_id)) #retrieve followers for an ID
-print(client.get_users_following(user_id))
+#print(client.get_users_following(user_id)) #retrieve accounts followed for an ID
 
 for i in range(0,len(response.includes)):
     if (response.includes['users'][i].id) not in (client.get_users_following(user_id)):
         client.follow_user(response.includes['users'][i].id) #follow the user
+
+# print("@%s" % response.includes['users'][i].username)
+# client.create_tweet(text=\
+#     "Theoretically, I now follow anyone who mentions me. I crave attention. It's loney with only @%s"\
+#          % (response.includes['users'][i].username))
