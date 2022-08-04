@@ -1,0 +1,6 @@
+secrets.py
+dist
+build
+.settings
+__pycache__
+*.code-workspace
