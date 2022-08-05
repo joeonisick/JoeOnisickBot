@@ -2,10 +2,7 @@
 import tweepy
 import time
 from secrets import declare_secrets
-
-#provide keys
-bearer_token, consumer_key,consumer_secret,access_token,access_token_secret \
-    = declare_secrets() #function that defines secret & API keys
+from Support_Functions import send_tweet
 
 #Twitter rate limt reference: 
 #https://developer.twitter.com/en/docs/twitter-api/rate-limits
@@ -29,7 +26,11 @@ def follow_mention(client, user_id, mentions):
     list_count = 0 #index var
     for user in mentions.includes['users']:
         if (mentions.includes['users'][list_count].id) not in followed:
-            client.follow_user(mentions.includes['users'][list_count].id) 
+            client.follow_user(mentions.includes['users'][list_count].id)
+            tweet_text = \
+                ("@%s You mentioned me! Unfortunately, now I must follow you like a stray dog." \
+                    %  mentions.includes['users'][list_count].username)
+            client.create_tweet(text=tweet_text) 
         list_count += 1
 
 def check_mentions(client, user_id, since_id):
@@ -51,15 +52,19 @@ def check_mentions(client, user_id, since_id):
                 tweet_text = \
                     (" Thanks for engaging. This reply is the current extent of my communication logic."\
                          % user)
-                client.create_tweet(text=tweet_text,in_reply_to_tweet_id=tweet_id)
+                #client.create_tweet(text=tweet_text,in_reply_to_tweet_id=tweet_id) #needs fixing
     new_since_id = mentions.meta['oldest_id']
     follow_mention(client, user_id, mentions)
+    print(new_since_id)
     return(new_since_id)
 
 def main():
     user_id = 1554986957532438535 #set JoeOnisickBot's user id
-    #since ID is set to the first mention of the bot. Since ID is used inclusively.
-    since_id = 1555031447047737345 #used to track mentions on the timeline
+    #since ID is set to the oldest tweet replied to. Since ID is used inclusively.
+    since_id = 1555241881436672001 #used to track mentions on the timeline
+    #provide keys
+    bearer_token, consumer_key,consumer_secret,access_token,access_token_secret \
+        = declare_secrets() #function that defines secret & API keys
     client = tweepy.Client( 
         bearer_token = bearer_token, consumer_key=consumer_key, 
         consumer_secret=consumer_secret, access_token=access_token, 
@@ -67,11 +72,12 @@ def main():
     ) 
     
     count = 1
-    while True:
+    while True:    
         since_id = check_mentions(client, user_id, since_id)
         print("While Loop Count: %s" % count)
         time.sleep(120)
         count += 1
+
 
 if __name__ == "__main__":
     main()

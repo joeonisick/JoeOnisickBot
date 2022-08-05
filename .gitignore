@@ -4,3 +4,5 @@ build
 .settings
 __pycache__
 *.code-workspace
+API_Tests.py
+tweet_temp.txt
