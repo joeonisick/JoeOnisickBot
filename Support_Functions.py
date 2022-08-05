@@ -29,6 +29,9 @@ def commit_and_tweet(commit_message):
     #caution uses the current environment and adds everything
     subprocess.call(["git", "add", "."])
     subprocess.call(["git", "commit", "-m", commit_message])
+    subprocess.call(["git", "push"])
+    client.create_tweet(text=commit_message)
+    return()
 
 
 commit_and_tweet("Added function to add, commit, push to git, then tweet the git commit message.")
