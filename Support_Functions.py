@@ -1,4 +1,5 @@
 import os
+import subprocess
 import tweepy
 from secrets import declare_secrets
 
@@ -23,3 +24,11 @@ def send_tweet(tweet_text):
         #print(text_to_tweet.read())
         client.create_tweet(text=text_to_tweet.read())
     return()
+
+def commit_and_tweet(commit_message):
+    #caution uses the current environment and adds everything
+    subprocess.call(["git", "add", "."])
+    subprocess.call(["git", "commit", "-m", commit_message])
+
+
+commit_and_tweet("Added function to add, commit, push to git, then tweet the git commit message.")
