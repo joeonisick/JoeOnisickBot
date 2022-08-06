@@ -72,7 +72,8 @@ def check_mentions(client, user_id, since_id):
                 #client.create_tweet(text=tweet_text,in_reply_to_tweet_id=tweet_id) #needs fixing
     new_since_id = mentions.meta['oldest_id']
     with open('since_id.txt', 'w') as since_id:
-        since_id.write(str(new_since_id))
+        temp = str(since_id)
+        since_id.write(temp)
     follow_mention(client, user_id, mentions)
     return(new_since_id)
 
@@ -152,7 +153,8 @@ def check_photo_requests(photo_since):
     
     photo_since = tweets.meta['oldest_id']
     with open('photo_since.txt', 'w') as photo_since:
-        photo_since.write(str(photo_since))
+        temp = str(photo_since)
+        photo_since.write(temp)
     return(photo_since)
 
 def main():

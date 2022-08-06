@@ -1,1 +1,1 @@
-1555757275591188486
+<_io.TextIOWrapper name='photo_since.txt' mode='w' encoding='cp1252'>

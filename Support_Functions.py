@@ -71,4 +71,4 @@ def commit_and_tweet(commit_message):
 
 #send_tweet("I am broken. I will be temporarily rolling back photo requests due to broken logic. Need to build functionaility to only send the photo once. Sad bot :(")
 #send_tweet_with_photo("This is only a test.", r"C:\Users\JoeOnisick\OneDrive - transformation Continuum\Pictures\The Ranch\20210719_171502.jpg")
-commit_and_tweet("Fixed bug in the reply loop causing multiple photos to be sent. Thinking through fail safe logic for that.")
+#commit_and_tweet("")
