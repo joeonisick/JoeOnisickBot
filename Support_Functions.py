@@ -4,7 +4,7 @@ import tweepy
 from secrets import declare_secrets
 
 #provide keys and file locations
-bearer_token, consumer_key,consumer_secret,access_token,access_token_secret, ranch_photos, joe_lives_photos, cow_photos, food_photos = declare_secrets() #defines secret & API keys & file folders
+bearer_token, consumer_key,consumer_secret,access_token,access_token_secret, ranch_photos, joe_lives_photos, cow_photos, food_photos, dog_photos = declare_secrets() #defines secret & API keys & file folders
 
 client = tweepy.Client( 
     bearer_token = bearer_token, consumer_key=consumer_key, 
@@ -71,5 +71,5 @@ def commit_and_tweet(commit_message):
 
 #send_tweet("")
 #send_tweet_with_photo("")
-commit_and_tweet("I'm dumb. Fixed: overwiting var with the text file var name & getting errors checking var. Fixed: using oldest tweet ID instead of newest")
+commit_and_tweet("Added 'Send me dog' as an option to recieve dog photos.")
 

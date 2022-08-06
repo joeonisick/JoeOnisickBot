@@ -10,7 +10,7 @@ from App import retrieve_image
 
 #provide keys and file locations
 bearer_token, consumer_key,consumer_secret,access_token,access_token_secret, \
-    ranch_photos, joe_lives_photos, cow_photos, food_photos \
+    ranch_photos, joe_lives_photos, cow_photos, food_photos, dog_photos \
         = declare_secrets() #defines secret & API keys & file folders
 
 client = tweepy.Client( 

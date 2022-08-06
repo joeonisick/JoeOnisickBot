@@ -14,7 +14,7 @@ from Support_Functions import send_tweet, send_tweet_reply_with_photo
 
 #provide keys and file locations
 bearer_token, consumer_key,consumer_secret,access_token,access_token_secret, \
-    ranch_photos, joe_lives_photos, cow_photos, food_photos \
+    ranch_photos, joe_lives_photos, cow_photos, food_photos, dog_photos \
         = declare_secrets() #defines secret & API keys & file folders
 
 client = tweepy.Client( 
@@ -75,7 +75,7 @@ def check_mentions(client, user_id):
 def retrieve_image(image_type):
     print("Start retreive_image.")
     # supported image_types are: 
-    # ranch, joe_lives_photos, cow_photos, food_photos
+    # ranch, joe_lives_photos, cow_photos, food_photos, dog_photos
     image_list = []
 
     #for joe_lives_photos pull the latest, else pull random
@@ -140,6 +140,8 @@ def check_photo_requests():
             elif "send me ranch" in tweet.text.lower(): 
                 image_type = ranch_photos
                 name = "ranch"
+            elif "send me dog" in tweet.text.lower():
+                name = "dog"
             else:
                 return()
         file, timestamp, picture = retrieve_image(image_type)
@@ -154,7 +156,7 @@ def check_photo_requests():
     with open('photo_since.txt', 'w') as tmp_text:
         tmp_text.write(str(photo_since))
     print("End check_photo_requests.")
-    return(photo_since)
+    return()
 
 def main():
     print("Start main.")
