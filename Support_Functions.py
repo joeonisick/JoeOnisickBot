@@ -71,5 +71,5 @@ def commit_and_tweet(commit_message):
 
 #send_tweet("")
 #send_tweet_with_photo("")
-commit_and_tweet("Added 'Send me dog' as an option to recieve dog photos.")
+#commit_and_tweet("")
 

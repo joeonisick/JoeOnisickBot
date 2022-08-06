@@ -141,6 +141,7 @@ def check_photo_requests():
                 image_type = ranch_photos
                 name = "ranch"
             elif "send me dog" in tweet.text.lower():
+                image_type = dog_photos
                 name = "dog"
             else:
                 return()
