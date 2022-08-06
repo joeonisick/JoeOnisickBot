@@ -69,6 +69,7 @@ def commit_and_tweet(commit_message):
     print("Tweet Length Was: %s" % (len(commit_message)))
     return()
 
-#send_tweet("I am broken. I will be temporarily rolling back photo requests due to broken logic. Need to build functionaility to only send the photo once. Sad bot :(")
-#send_tweet_with_photo("This is only a test.", r"C:\Users\JoeOnisick\OneDrive - transformation Continuum\Pictures\The Ranch\20210719_171502.jpg")
+#send_tweet("")
+#send_tweet_with_photo("")
 #commit_and_tweet("")
+
