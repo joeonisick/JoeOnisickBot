@@ -51,7 +51,7 @@ def check_mentions(client, user_id, since_id):
          max_results=100,since_id=since_id)
     query1 = "to:JoeOnisickBot"
     tweets = client.search_recent_tweets(query=query1, expansions =\
-         'author_id', max_results=100)
+         'author_id', max_results=100,since_id=since_id)
     # I don't know WTF the following code does, or why it works.
     #for dog in dog if dog in dog in other dog do dog...
     if tweets.meta['result_count'] == 0:
@@ -119,6 +119,9 @@ def check_photo_requests(photo_since):
         tweets = client.search_recent_tweets(query=photo_query.read(),expansions='author_id',max_results=100,since_id=photo_since)
     if tweets.meta['result_count'] == 0:
         return()
+    for tweet in tweets.data:
+        print(tweet.text)
+        print(tweet.id)
     users = {u["id"]: u for u in tweets.includes['users']}
     for tweet in tweets.data:
         if users[tweet.author_id]:
@@ -156,10 +159,10 @@ def main():
     user_id = 1554986957532438535 #set JoeOnisickBot's user id
     # since_id is set to the oldest tweet replied to. Since ID is used inclusively.
     with open('since_id.txt', 'r') as since_id:
-        since_id = since_id.read()
+        since_id = int(since_id.read())
     # photo_since is set to the oldest photo sent. Since ID is used inclusively.
     with open('photo_since.txt', 'r') as photo_since:
-        photo_since = photo_since.read()
+        photo_since = int(photo_since.read())
 
     count = 1
     while True:    
