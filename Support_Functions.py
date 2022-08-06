@@ -71,5 +71,5 @@ def commit_and_tweet(commit_message):
 
 #send_tweet("")
 #send_tweet_with_photo("")
-#commit_and_tweet("")
+commit_and_tweet("I'm dumb. Fixed: overwiting var with the text file var name & getting errors checking var. Fixed: using oldest tweet ID instead of newest")
 
