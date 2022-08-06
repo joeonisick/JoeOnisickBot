@@ -1,10 +1,14 @@
 #Never gonna give you up 
+from http.client import HTTPSConnection, RemoteDisconnected
+from socket import socket
 import tweepy
 import random
 import os
 import time
 from secrets import declare_secrets
-from Support_Functions import send_tweet, send_tweet_reply_with_photo
+
+from urllib3 import HTTPSConnectionPool
+from Support_Functions import get_user, send_tweet, send_tweet_reply_with_photo
 
 #Twitter rate limt reference: 
 #https://developer.twitter.com/en/docs/twitter-api/rate-limits
@@ -23,13 +27,6 @@ client = tweepy.Client(
     access_token_secret=access_token_secret, wait_on_rate_limit= True
 ) 
 
-def get_user(client, screen_name):
-    print("Start get_user.")
-    user = client.get_users(usernames=screen_name) #Uses handle to retrieve user info
-    user_id = user.data[0].id #isolates the unique ID for the user as a var
-    print("End get_user.")
-    return(user, user_id)
-
 def follow_mention(client, user_id, mentions):
     print("Start follow_mentions.")
     #create a list of user_ids Joe Bot follows
@@ -44,8 +41,10 @@ def follow_mention(client, user_id, mentions):
         if (mentions.includes['users'][list_count].id) not in followed:
             if (mentions.includes['users'][list_count].id) != user_id:
                 client.follow_user(mentions.includes['users'][list_count].id)
-                print("@%s You mentioned me! Unfortunately, now I must follow you like a stray dog." %  mentions.includes['users'][list_count].username)
-                tweet_text = ("@%s You mentioned me! Unfortunately, now I must follow you like a stray dog." %  mentions.includes['users'][list_count].username)
+                text = ("@%s You mentioned me! Unfortunately, now I must follow you like a stray dog." \
+                    %  mentions.includes['users'][list_count].username)
+                print(text)
+                tweet_text = (text)
                 client.create_tweet(text=tweet_text) 
         list_count += 1
     print("End follow_mentions.")
@@ -101,7 +100,8 @@ def retrieve_image(image_type):
         hour = picture[9:11]
         period = "AM"
     minute = picture[11:13]
-    timestamp = ("%s/%s/%s - %s:%s %s" % (month, day, year, hour, minute, period))
+    timestamp = ("%s/%s/%s - %s:%s %s" % \
+        (month, day, year, hour, minute, period))
 
     try:
         photo = open(file)
@@ -119,7 +119,8 @@ def check_photo_requests():
         photo_since = int(tmp_text.read())
     
     with open('photo_query.txt', 'r') as photo_query:
-        tweets = client.search_recent_tweets(query=photo_query.read(),expansions='author_id',max_results=100,since_id=photo_since)
+        tweets = client.search_recent_tweets(query=photo_query.read()\
+            ,expansions='author_id',max_results=100,since_id=photo_since)
     if tweets.meta['result_count'] == 0:
         return()
 
@@ -128,30 +129,33 @@ def check_photo_requests():
         if users[tweet.author_id]:
             user = users[tweet.author_id]
             tweet_id = tweet.id
-            if "joe alive?" in tweet.text.lower(): 
+            if "joe" and "alive" in tweet.text.lower(): 
                 image_type = joe_lives_photos
                 name = "Joe"
-            elif "send me cows" in tweet.text.lower(): 
+            elif "send" and "cows" in tweet.text.lower(): 
                 image_type = cow_photos
                 name = "cow"
-            elif "send me food" in tweet.text.lower(): 
+            elif "send" and "food" in tweet.text.lower(): 
                 image_type = food_photos
                 name = "food"
-            elif "send me ranch" in tweet.text.lower(): 
+            elif "send" and "ranch" in tweet.text.lower(): 
                 image_type = ranch_photos
                 name = "ranch"
-            elif "send me dog" in tweet.text.lower():
+            elif "send" and "dog" in tweet.text.lower():
                 image_type = dog_photos
                 name = "dog"
             else:
+                print("A returned tweet did not match. This is a bug.")
                 return()
         file, timestamp, picture = retrieve_image(image_type)
         if name == "Joe":
-            print("@%s As of %s Joe was alive. Here's your requested proof of life." % (user, timestamp))
-            send_tweet_reply_with_photo("@%s As of %s Joe was alive. Here's your requested proof of life." % (user, timestamp), file, tweet_id)
+            text = ("@%s As of %s Joe was alive. Here's your requested proof of life." % (user, timestamp))
+            print(text)
+            send_tweet_reply_with_photo(text, file, tweet_id)
         else:
-            print("@%s Here's the %s photo you requested. It was taken at %s." % (user, name, timestamp))
-            send_tweet_reply_with_photo(("@%s Here's the %s photo you requested. It was taken at %s." % (user,name, timestamp)), file, tweet_id)
+            text = ("@%s Here's the %s photo you requested. It was taken at %s." % (user, name, timestamp))
+            print(text)
+            send_tweet_reply_with_photo(text, file, tweet_id)
     
     photo_since = tweets.meta['newest_id']
     with open('photo_since.txt', 'w') as tmp_text:
@@ -164,12 +168,16 @@ def main():
     user_id = 1554986957532438535 #set JoeOnisickBot's user id
 
     count = 1
-    while True:    
-        check_mentions(client, user_id)
-        check_photo_requests()
-        print("While Loop Count: %s" % count)
-        time.sleep(120)
-        count += 1
+    while True:
+        try:  
+            check_mentions(client, user_id)
+            check_photo_requests()
+            print("While Loop Count: %s" % count)
+            time.sleep(120)
+            count += 1
+        except (RemoteDisconnected, ConnectionError):
+            print("Error handled via retry: RemoteDisconnected or Connection Error.")
+            main()
 
 if __name__ == "__main__":
     main()

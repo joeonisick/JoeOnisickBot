@@ -12,6 +12,12 @@ client = tweepy.Client(
     access_token_secret=access_token_secret, wait_on_rate_limit= True
 ) 
 
+def get_user(client, screen_name):
+    print("Start get_user.")
+    user = client.get_users(usernames=screen_name) #Uses handle to retrieve user info
+    user_id = user.data[0].id #isolates the unique ID for the user as a var
+    print("End get_user.")
+    return(user, user_id)
 
 def send_tweet(tweet_text):
 #prepares a tweet to send.
@@ -71,5 +77,5 @@ def commit_and_tweet(commit_message):
 
 #send_tweet("")
 #send_tweet_with_photo("")
-#commit_and_tweet("")
+commit_and_tweet("Added connection error exception handling with retry. Reduced the strictness of photo request logic.")
 

@@ -36,7 +36,14 @@ mentions = client.get_users_mentions(id=user_id,expansions='author_id',\
 #                    PUT THE CODE YOU'RE TESTING HERE
 #*****************************************************************************
 
+photo_since = 1555935037966000000 
 
+with open('test_query.txt', 'r') as test_query:
+    tweets = client.search_recent_tweets(query=test_query.read()\
+        ,expansions='author_id',max_results=100,since_id=photo_since)
+if tweets.meta['result_count'] != 0:
+    for tweet in tweets.data:
+        print(tweet)
 
 
 
