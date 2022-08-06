@@ -24,7 +24,7 @@ def send_tweet(tweet_text):
         client.create_tweet(text=text_to_tweet.read())
     return()
 
-def send_tweet_with_photo(status, filename):
+def send_tweet_reply_with_photo(status, filename, tweet_id):
     #prepares a tweet to send with media attached.
     #Creates and uses a txt file to ensure proper tweet text formatting
     
@@ -47,7 +47,7 @@ def send_tweet_with_photo(status, filename):
     with open('media_file.txt', 'r') as media_file:
         media = api.media_upload(filename=media_file.read()) 
     with open('tweet_temp.txt', 'r') as text_to_tweet:
-        client.create_tweet(text=text_to_tweet.read(), media_ids=[media.media_id_string])
+        client.create_tweet(text=text_to_tweet.read(), media_ids=[media.media_id_string], in_reply_to_tweet_id=tweet_id)
     if os.path.exists('tweet_temp.txt'):
         os.remove('tweet_temp.txt')
     if os.path.exists('media_file.txt'):
@@ -69,6 +69,6 @@ def commit_and_tweet(commit_message):
     print("Tweet Length Was: %s" % (len(commit_message)))
     return()
 
-#send_tweet("@JoeOnisickBot Hey bot Send me cows")
+#send_tweet("I am broken. I will be temporarily rolling back photo requests due to broken logic. Need to build functionaility to only send the photo once. Sad bot :(")
 #send_tweet_with_photo("This is only a test.", r"C:\Users\JoeOnisick\OneDrive - transformation Continuum\Pictures\The Ranch\20210719_171502.jpg")
-commit_and_tweet("Added multiple functions including major feature release Picture Requests beta functionaility")
+commit_and_tweet("Fixed the photo reply bug. Now one reply per request. That's the theory at least.")

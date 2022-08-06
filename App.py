@@ -4,7 +4,7 @@ import random
 import os
 import time
 from secrets import declare_secrets
-from Support_Functions import send_tweet, send_tweet_with_photo
+from Support_Functions import send_tweet, send_tweet_reply_with_photo
 
 #Twitter rate limt reference: 
 #https://developer.twitter.com/en/docs/twitter-api/rate-limits
@@ -54,6 +54,8 @@ def check_mentions(client, user_id, since_id):
          'author_id', max_results=100)
     # I don't know WTF the following code does, or why it works.
     #for dog in dog if dog in dog in other dog do dog...
+    if tweets.meta['result_count'] == 0:
+        return()
     users = {u["id"]: u for u in tweets.includes['users']}
     for tweet in tweets.data:
         if users[tweet.author_id]:
@@ -69,8 +71,9 @@ def check_mentions(client, user_id, since_id):
                          % user)
                 #client.create_tweet(text=tweet_text,in_reply_to_tweet_id=tweet_id) #needs fixing
     new_since_id = mentions.meta['oldest_id']
+    with open('since_id.txt', 'w') as since_id:
+        since_id.write(str(new_since_id))
     follow_mention(client, user_id, mentions)
-    print(new_since_id)
     return(new_since_id)
 
 def retrieve_image(image_type):
@@ -110,10 +113,12 @@ def retrieve_image(image_type):
         print("File not found.")
     return(file, timestamp, picture)
 
-def check_photo_requests():
+def check_photo_requests(photo_since):
     #uses a .txt file to simplify passing arguments cleanly
     with open('photo_query.txt', 'r') as photo_query:
-        tweets = client.search_recent_tweets(query=photo_query.read(),expansions='author_id',max_results=100)
+        tweets = client.search_recent_tweets(query=photo_query.read(),expansions='author_id',max_results=100,since_id=photo_since)
+    if tweets.meta['result_count'] == 0:
+        return()
     users = {u["id"]: u for u in tweets.includes['users']}
     for tweet in tweets.data:
         if users[tweet.author_id]:
@@ -128,7 +133,7 @@ def check_photo_requests():
             elif "send me food" in tweet.text.lower(): 
                 image_type = food_photos
                 name = "food"
-            elif "original" in tweet.text.lower(): #change to "send me ranch" and remove original from search
+            elif "send me ranch" in tweet.text.lower(): 
                 image_type = ranch_photos
                 name = "ranch"
             else:
@@ -136,22 +141,30 @@ def check_photo_requests():
         file, timestamp, picture = retrieve_image(image_type)
         print("Retrieved %s, from %s, with timestamp %s" % (picture, file, timestamp))
         if name == "Joe":
-            print("@%sAs of %s Joe was alive. Here's your requested proof of life." % (user, timestamp))
-            send_tweet_with_photo("@%sAs of %s Joe was alive. Here's your requested proof of life." % (user, timestamp, file))
+            print("@%s As of %s Joe was alive. Here's your requested proof of life." % (user, timestamp))
+            send_tweet_reply_with_photo("@%s As of %s Joe was alive. Here's your requested proof of life." % (user, timestamp), file, tweet_id)
         else:
-            print("@%sHere's the %s photo you requested. It was taken at %s." % (user, name, timestamp))
-            send_tweet_with_photo(("@%sHere's the %s photo you requested. It was taken at %s." % (user,name, timestamp)), file)
-    return()
+            print("@%s Here's the %s photo you requested. It was taken at %s." % (user, name, timestamp))
+            send_tweet_reply_with_photo(("@%s Here's the %s photo you requested. It was taken at %s." % (user,name, timestamp)), file, tweet_id)
+    
+    photo_since = tweets.meta['oldest_id']
+    with open('photo_since.txt', 'w') as photo_since:
+        photo_since.write(str(photo_since))
+    return(photo_since)
 
 def main():
     user_id = 1554986957532438535 #set JoeOnisickBot's user id
-    #since ID is set to the oldest tweet replied to. Since ID is used inclusively.
-    since_id = 1555241881436672001 #used to track mentions on the timeline
-  
+    # since_id is set to the oldest tweet replied to. Since ID is used inclusively.
+    with open('since_id.txt', 'r') as since_id:
+        since_id = since_id.read()
+    # photo_since is set to the oldest photo sent. Since ID is used inclusively.
+    with open('photo_since.txt', 'r') as photo_since:
+        photo_since = photo_since.read()
+
     count = 1
     while True:    
         since_id = check_mentions(client, user_id, since_id)
-        check_photo_requests()
+        photo_since = check_photo_requests(photo_since)
         print("While Loop Count: %s" % count)
         time.sleep(120)
         count += 1
