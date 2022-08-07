@@ -30,6 +30,24 @@ def send_tweet(tweet_text):
         client.create_tweet(text=text_to_tweet.read())
     return()
 
+def send_tweet_reply(status, tweet_id):
+    #prepares a tweet to send as a reply.
+    #Creates and uses a txt file to ensure proper tweet text formatting
+    
+    if os.path.exists('tweet_temp.txt'):
+        os.remove('tweet_temp.txt')
+
+    with open('tweet_temp.txt', 'w') as text_to_tweet:
+        text_to_tweet.write(status)
+
+    with open('tweet_temp.txt', 'r') as text_to_tweet:
+        client.create_tweet(text=text_to_tweet.read(), in_reply_to_tweet_id=tweet_id)
+    
+    if os.path.exists('tweet_temp.txt'):
+        os.remove('tweet_temp.txt')
+
+    return()
+
 def send_tweet_reply_with_photo(status, filename, tweet_id):
     #prepares a tweet to send with media attached.
     #Creates and uses a txt file to ensure proper tweet text formatting
@@ -90,5 +108,5 @@ def commit_and_tweet(commit_message):
 
 #send_tweet("")
 #send_tweet_with_photo("")
-#commit_and_tweet("")
+commit_and_tweet("Added function to stalk the use of #JoeOnisick hashtag and retweet it with reply. Added reply function.")
 

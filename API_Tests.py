@@ -5,7 +5,7 @@ import os
 import tweepy
 import random
 from secrets import declare_secrets
-from Support_Functions import send_tweet, send_tweet_reply_with_photo
+from Support_Functions import send_tweet, send_tweet_reply_with_photo, send_tweet_reply
 from App import retrieve_image
 
 #provide keys and file locations
@@ -36,9 +36,7 @@ mentions = client.get_users_mentions(id=user_id,expansions='author_id',\
 #                    PUT THE CODE YOU'RE TESTING HERE
 #*****************************************************************************
 
-mentions = client.get_users_mentions(id=user_id,expansions='author_id',\
-        max_results=100,since_id=since_id)
-print(mentions.data[1].id)
+
 
 
 
@@ -47,7 +45,26 @@ print(mentions.data[1].id)
 #*****************************************************************************
 #                STOP PUTTING THE CODE YOU'RE TESTING HERE
 #*****************************************************************************
+#*****************************************************************************
+#            USE THIS CODE BLOCK TO TEST TWITTER QUERIES.
+# SAVE THE TEST QUERY IN A FILE CALLED TEST_QUERY TO SIMPLIFY STRING PASSING
+#*****************************************************************************
+since_id = 1554598110957125634 # Tweet_id to set how far back to search
 
+def search_tweets(since_id):
+    with open('test_query.txt', 'r') as test_query: # This is your query code
+        tweets = client.search_recent_tweets(query=test_query.read()\
+            ,expansions='author_id',max_results=100,since_id=since_id)
+    return(tweets)
+
+# Insert test code below
+
+
+
+
+#*****************************************************************************
+#                STOP PUTTING THE CODE YOU'RE TESTING HERE
+#*****************************************************************************
 #******------------------------------------------------------------------*****
 #           PUT CODE THAT WORKED AND YOU MAY WANT TO REUSE HERE
 #******------------------------------------------------------------------*****

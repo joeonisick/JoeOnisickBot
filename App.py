@@ -8,7 +8,8 @@ import time
 from secrets import declare_secrets
 
 from urllib3 import HTTPSConnectionPool
-from Support_Functions import get_user, send_tweet, send_tweet_reply_with_photo
+from Support_Functions import get_user, send_tweet, \
+    send_tweet_reply_with_photo, send_tweet_reply, quote_tweet
 
 #Twitter rate limt reference: 
 #https://developer.twitter.com/en/docs/twitter-api/rate-limits
@@ -176,6 +177,26 @@ def tweet_lyrics():
     tweet_text = random.choice(song_lyrics) #choose random response
     send_tweet(tweet_text)
 
+def stalk_joeonisick():
+    #searches for the hashtag #JoeOnisick and retweets it with message
+    with open('since_id.txt', 'r') as tmp_text: # Search for the hashtag
+        since_id = tmp_text.read()
+
+    tweets = client.search_recent_tweets(query="#JoeOnisick",\
+    expansions='author_id',max_results=100,since_id=since_id)
+    
+    users = {u["id"]: u for u in tweets.includes['users']}
+    for tweet in tweets.data:
+        if users[tweet.author_id]:
+            user = users[tweet.author_id]
+            if str(user) != "JoeOnisickBot":
+                tweet_id = tweet.id
+                url =("https://twitter.com/twitter/statuses/" + str(tweet_id))
+                tweet_text = ("I see you're talking about Joe. He likes that." % (str(user)))
+                quote_tweet(tweet_text, url)
+    
+    return()
+
 def main():
     print("Start main.")
     user_id = 1554986957532438535 #set JoeOnisickBot's user id
@@ -183,6 +204,7 @@ def main():
     count = 1
     while True:
         try:  
+            stalk_joeonisick()
             check_mentions(client, user_id)
             check_photo_requests()
             print("While Loop Count: %s" % count)
