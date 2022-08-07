@@ -24,6 +24,8 @@ To use the project you will need the following files:
 - Support_Functions.py: This file contains functions used by the program, as well as some functions for maintenance and support.
   - General functions like send_tweet live here and are called by App.py. Other functions like commit_and_tweet can be used here as desired.
 - photo_query.txt:  used to store the query string for photo requests to pass to Twitter. A text file is used to ensure accurate string passing.
+- follow_reponses.txt: used to store a list of responses that can be randomly used to generate tweets after following someone
+- song_lyrics: used to store out of context lyrics used by a function to tweet a random one every ~3 hours.
 - photo_since.txt:  stores latest tweet id of the last photo replied to. Stored to text to save across program runs. Will be created by the app.
 - since_id: stored latest tweet id of the last mention followed. Stored to text to save across program runs. Will be created by the app.
 - secrets.py: ENSURE THIS IS IN YOUR .gitignore. This declares API keys and file locations returning them from a function.
