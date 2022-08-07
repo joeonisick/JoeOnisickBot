@@ -36,16 +36,23 @@ mentions = client.get_users_mentions(id=user_id,expansions='author_id',\
 #                    PUT THE CODE YOU'RE TESTING HERE
 #*****************************************************************************
 
-photo_since = 1555935037966000000 
+# with open('test_query.txt', 'r') as test_query:
+#     tweets = client.search_recent_tweets(query=test_query.read()\
+#         ,expansions='author_id',max_results=100,since_id=photo_since)
+# if tweets.meta['result_count'] != 0:
+#     for tweet in tweets.data:
+#         print(tweet)
 
-with open('test_query.txt', 'r') as test_query:
-    tweets = client.search_recent_tweets(query=test_query.read()\
-        ,expansions='author_id',max_results=100,since_id=photo_since)
-if tweets.meta['result_count'] != 0:
-    for tweet in tweets.data:
-        print(tweet)
+# Store reponses from follow_responses,txt as a list
 
+def tweet_lyrics():
+    # Pulls a random out of context line of lyrics from song_lyrics to tweet
+    with open('song_lyrics.txt', 'r') as lyrics:
+        song_lyrics = lyrics.read().split("\n")
 
+    tweet_text = random.choice(song_lyrics) #choose random response
+    send_tweet(tweet_text)
+tweet_lyrics()
 
 
 

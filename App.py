@@ -32,6 +32,11 @@ def follow_mention(client, user_id, mentions):
     #create a list of user_ids Joe Bot follows
     following = client.get_users_following(user_id,max_results=1000)
     followed = []
+
+    # Store reponses from follow_responses,txt as a list
+    with open('follow_responses.txt', 'r') as responses:
+        follow_responses = responses.read().split("\n")
+   
     for i in range(0, following.meta['result_count']):
         followed.append(following.data[i].id)
 
@@ -41,11 +46,10 @@ def follow_mention(client, user_id, mentions):
         if (mentions.includes['users'][list_count].id) not in followed:
             if (mentions.includes['users'][list_count].id) != user_id:
                 client.follow_user(mentions.includes['users'][list_count].id)
-                text = ("@%s You mentioned me! Unfortunately, now I must follow you like a stray dog." \
-                    %  mentions.includes['users'][list_count].username)
-                print(text)
-                tweet_text = (text)
+                response = random.choice(follow_responses) #choose random response
+                tweet_text = (str(response) % str((mentions.includes['users'][list_count].username)))
                 client.create_tweet(text=tweet_text) 
+                print(tweet_text)
         list_count += 1
     print("End follow_mentions.")
     return()
@@ -163,6 +167,14 @@ def check_photo_requests():
     print("End check_photo_requests.")
     return()
 
+def tweet_lyrics():
+    # Pulls a random out of context line of lyrics from song_lyrics to tweet
+    with open('song_lyrics.txt', 'r') as lyrics:
+        song_lyrics = lyrics.read().split("\n")
+
+    tweet_text = random.choice(song_lyrics) #choose random response
+    send_tweet(tweet_text)
+
 def main():
     print("Start main.")
     user_id = 1554986957532438535 #set JoeOnisickBot's user id
@@ -173,6 +185,8 @@ def main():
             check_mentions(client, user_id)
             check_photo_requests()
             print("While Loop Count: %s" % count)
+            if count == 1 or count % 90 == 0:
+                tweet_lyrics() #tweets random song lyrics every 3 hours
             time.sleep(120)
             count += 1
         except (RemoteDisconnected, ConnectionError):

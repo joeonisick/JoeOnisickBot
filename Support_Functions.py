@@ -60,6 +60,19 @@ def send_tweet_reply_with_photo(status, filename, tweet_id):
         os.remove('media_file.txt')
     return()
 
+def quote_tweet(tweet_text, url):
+    # Prepares a tweet to send including the url of tweet to quote tweet.
+    # This function can be repurposed to tweet with any url link
+    # Creates and uses a txt file to ensure proper tweet text formatting
+    if os.path.exists('tweet_temp.txt'):
+        os.remove('tweet_temp.txt')
+    with open('tweet_temp.txt', 'w') as text_to_tweet:
+        text_to_tweet.write(tweet_text + " " + url)
+    with open('tweet_temp.txt', 'r') as text_to_tweet:
+        client.create_tweet(text=text_to_tweet.read())
+        print(text_to_tweet.read())
+    return()
+
 def commit_and_tweet(commit_message):
     #Caution uses the current environment and adds everything
     #Total message must be less than 280 chars. Commit must be less than 260.
@@ -77,5 +90,5 @@ def commit_and_tweet(commit_message):
 
 #send_tweet("")
 #send_tweet_with_photo("")
-commit_and_tweet("Added connection error exception handling with retry. Reduced the strictness of photo request logic.")
+commit_and_tweet("Added variety to the follow responses. Added a function to occaisonally tweet out of context lyrics")
 
