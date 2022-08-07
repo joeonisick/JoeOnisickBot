@@ -1,6 +1,6 @@
 # Using Tweepy Objects
 
-This Document Describes Using the Tweepy Objects as I understand them. I make no claims to accuracy, this is simply what I've learned that works for using them.
+This Document Describes Using the Tweepy Objects as I understand them. I make no claims to accuracy, this is simply what I've learned that works for using them. If you just want to skip to the part that jelps you fix your code, I understand. Here you go: https://github.com/joeonisick/JoeOnisickBot/blob/main/Using_Tweepy_Objects.md#shut-up-and-give-me-the-answer-you-longwinded-moron.
 
 ## Tweepy Client Class
 
@@ -107,25 +107,25 @@ These items are a list of tweepy class objects about the users. Each inlcudes a 
 - Trying `print(mentions.data.id)` returns an error `AttributeError: 'list' object has no attribute 'id'`
 - But if we provide the list index (0 for our one item list) `print(mentions.data[0].id)` we hit paydirt with the tweet `id`: `1556257587070488576`
 - `print(mentions.data[0].text)` is also successful resulting in `@JoeOnisickBot send cow pic`
-So this gets us somewhere. We can iteratre through `mentions.data` and use `text` or `id` to retrieve the value we want. But what else? Let's search tweepy docs using the class we've discovered `tweepy.tweet.Tweet` and we get the info we need `https://docs.tweepy.org/en/stable/v2_models.html?highlight=class%20%27tweepy.tweet.Tweet#tweepy.Tweet`. Here we see all of the attributes we can use. The caveat here is they must be returned in the default request or through expansion options you define.
+So this gets us somewhere. We can iteratre through `mentions.data` and use `text` or `id` to retrieve the value we want. But what else? Let's search tweepy docs using the class we've discovered `tweepy.tweet.Tweet` and we get the info we need https://docs.tweepy.org/en/stable/v2_models.html?highlight=class%20%27tweepy.tweet.Tweet#tweepy.Tweet (kind of). Here we see all of the attributes we can use. The caveat here is they must be returned in the default request or through expansion options you define.
 Now lets try the expansion we used in the beginning. You may recall we retrieved mentions using `client.get_users_mentions` and added the optional expansion `expansions='author_id'`. So where in Medusa's fourth kidney is that stinking `author-id`? It seems important, but hasn't shown up in any of our print statements yet. Not in `mentions.data`, `mentions.includes`, or `mentions.meta`. WTF?
 
 Shall we dig? That's rhetorical, I don't care what you think.
 
-- Let's give this a shot: `print(mentions.data[0].author_id)` and amazingly it returns `15830229`. What is this mysterious `author-id`? For that we'll need to explore `mentions.includes' where the user data lives. I'll spoil the surprise for you, it's the user `id` of the tweet author. Interstingly, this doesn't appear anywhere in the commands we've used above, but it should solve out problem of tying `mentions.data` to the user data in `mentions.include'.
+- Let's give this a shot: `print(mentions.data[0].author_id)` and amazingly it returns `15830229`. What is this mysterious `author-id`? For that we'll need to explore `mentions.includes` where the user data lives. I'll spoil the surprise for you, it's the user `id` of the tweet author. Interstingly, this doesn't appear anywhere in the commands we've used above, but it should solve out problem of tying `mentions.data` to the user data in `mentions.include`.
 
 - Trying `print(mentions.includes.id)` returns an error `AttributeError: 'dict' object has no attribute 'id'`. Cool cool, makes sense. `includes` itself is a Python dictionary so it doesn't have attributes, it has key-value pairs. This is unlike `data` which is a list. So let's use the key `users`.
-- `print(mentions.includes['users'].id)` returns an error `AttributeError: 'list' object has no attribute 'id'`. Great, further down the rabbit hole we go. Our friend `mentions.includes` is a dictionary with the key `users`, but the key `users` contains a list of users. As stated above, this key contains: `id`, `name', and `username'. So hopefully indexing the `users` key like we did above will allow us to use atrributes, only this time we're 5786.98 (estimated) levels deep in a single object.
-- `print(mentions.includes['users'][0].id)` returns `15830229` Bingo, bango, blamo! this is the Twitter user `id` in the tweepy.User class from the , wait for it:
+- `print(mentions.includes['users'].id)` returns an error `AttributeError: 'list' object has no attribute 'id'`. Great, further down the rabbit hole we go. Our friend `mentions.includes` is a dictionary with the key `users`, but the key `users` contains a list of users. As stated above, this key contains: `id`, `name`, and `username`. So hopefully indexing the `users` key like we did above will allow us to use atrributes, only this time we're 5786.98 (estimated) levels deep in a single object.
+- `print(mentions.includes['users'][0].id)` returns `15830229` Bingo, bango, blamo! this is the Twitter user `id` in the `tweepy.User` class from the , wait for it:
 
-List at index 0, of the key `users`, of the dictionary `includes` of the Tweepy tweepy.`tweet.Tweet` class. Please shoot me now.
+List at index 0, of the key `users`, of the dictionary `includes` of the Tweepy `tweepy.tweet.Tweet` class. Please shoot me now.
 
 Well, let's make sure the rest of the expected attributes work:
 - `print(mentions.includes['users'][0].name)` returns `danedevalcourt` the 'Name' associated with the user's Twitter handle.
 - `print(mentions.includes['users'][0].username)` returns `danedevalcourt` the username (Twitter Handle) in this case it happens to be the same.
 - `print(mentions.includes['users'][0].author_id)` returns  `AttributeError`. I find this annoying, but I find everything annoying. `author_id` represents the users `id` which is a unique number associated with the twitter handle, and the magic that allows you clowns to constantly change your twitter handles without any negative effect on the rest of the logic.
 
-So... Now that we've reached the, apparent, bottom of tweet object rabbit hole, how do we tie the values in `mentions.data` to the values in `mentions.includes`. I'm so glad you asked! That last statement is a lie.
+So... Now that we've reached the, apparent, bottom of the `tweepy.tweet.Tweet` class rabbit hole, how do we tie the values in `mentions.data` to the values in `mentions.includes`. I'm so glad you asked! That last statement is a lie.
 
 Let's start with the basics:
 ```
@@ -139,9 +139,9 @@ This returns:
 ```
 @JoeOnisickBot send cow pic was sent by User ID: 15830229, with Tweet ID: 1556257587070488576
 ```
-Here we iterate through `mentions.data`, which contains a list of class tweepy.tweet.Tweet values, each containing two visible attributes: `id` and `text`, as well as a mystical `author_id` which is pulled through a space-time wormhole. In our example we only have one tweet, but you now know how to iterate that list and retrive the three criticial associated values: tweet `id`, `text` and `author_id`.
+Here we iterate through `mentions.data`, which contains a list of class `tweepy.tweet.Tweet` values, each containing two visible attributes: `id` and `text`, as well as a mystical `author_id` which is pulled through a space-time wormhole. In our example we only have one tweet, but you now know how to iterate that list and retrive the three criticial associated values: tweet: `id`, `text` and `author_id`.
 
-Next, we may want the rest of the user information associated with that `author_id`, and have it associated with the tweet. For that we can use this:
+Next, we may want the rest of the user information associated with that `author_id`, and to have it associated with the tweet. Whcih kind of feels like a default requirement... For that we can use this:
 ```
 tweet_data = {}
 for tweet in mentions.data:
@@ -169,13 +169,13 @@ Which returns the following:
 If Tweepy originally returned anything like this, I'd have a week of my life back. I've written the code above out in a verbose format for two reasons, it's easier to explain/understand, I have no idea how to write elegant code. There are an infinite number of ways to do this. Most of them more pythonic, more elegant, less processing intensive, whatever. I'm not saying my code doesn't suck, I am saying it works.
 
 ### Shut Up and Give me the Answer You Longwinded Moron!
-Here is the quick reference for the code solutions above. They all assume you have used Tweepy to return a calls stored as 'mentions' as in the example code.
+Here is the quick reference for the code solutions above. They all assume you have used Tweepy to return a Tweepy class stored as 'mentions' as in the example code.
 
 - `mentions.data`: Tweet data containing tweet `id` and `test` visibly, and `author_id` pulled from the bowels of hell.
 -- `mentions.data[x].id`: returns the tweet `id`
 -- `mentions.data[x].text': returns the tweet `text`
 -- `mentions.data[x].author_id`: crosses the river styx to obtain the `author_id` from the bowels of Satan's, well, bowels.
-- `mentions.includes`: Additional default and optional data about the tweet
+- `mentions.includes`: Additional default and optional data about the tweets
 -- `mentions.includes['users'][x].id` resturns the user `id`, not to be confused with the tweet `id` above.
 -- `mentions.includes['users'][x].name` returns the name of the user (this is not username)
 -- `mentions.includes['users'][x].username` returns the username (handle) of the user
