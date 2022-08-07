@@ -1,5 +1,5 @@
 # JoeOnisickBot
-This non-innovative and non-intuitive project replaces the real life Joe Onisick with somethig far more useful. Namely a Twitter bot with minimal functionality. The application interfaces with users through its Twitter account @JoeOnisickBot. The bot is designed to engage with users and provide a Joe Onisick experience that, unlike the real version, is based on logic. In this case logic in the form of Python code written by someone with no idea what they're doing.
+This non-innovative and non-intuitive project replaces the real life Joe Onisick with something far more useful. Namely a Twitter bot with minimal functionality. The application interfaces with users through its Twitter account @JoeOnisickBot. The bot is designed to engage with users and provide a Joe Onisick experience that, unlike the real version, is based on logic. In this case logic in the form of Python code written by someone with no idea what they're doing.
 
 ## Prerequisites
 
