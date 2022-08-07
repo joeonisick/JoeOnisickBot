@@ -49,7 +49,7 @@ def follow_mention(client, user_id, mentions):
                 client.follow_user(mentions.includes['users'][list_count].id)
                 tweet_id = mentions.data[1].id
                 response = random.choice(follow_responses) #choose random response
-                tweet_text = (str(response) % str((mentions.includes['users'][list_count].username)))
+                tweet_text = ("@%s %S" % (str(mentions.includes['users'][list_count].username), str(response)))
                 client.create_tweet(text=tweet_text, in_reply_to_tweet_id=tweet_id) 
                 print(tweet_text)
         list_count += 1
