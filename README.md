@@ -30,6 +30,7 @@ To use the project you will need the following files:
 - since_id: stored latest tweet id of the last mention followed. Stored to text to save across program runs. Will be created by the app.
 - secrets.py: ENSURE THIS IS IN YOUR .gitignore. This declares API keys and file locations returning them from a function.
 - Example_Secrets: Example Secrets files with placeholders for your keys and directories. Rename and add to .gitignore before adding keys.
+- Using_Tweepy_Objects.md: When you start pulling your hair out using Tweepy, start here (seriously, before you go anywhere else.)
 
 ## Built With
 

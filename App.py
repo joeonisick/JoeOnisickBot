@@ -192,7 +192,7 @@ def stalk_joeonisick():
             if str(user) != "JoeOnisickBot":
                 tweet_id = tweet.id
                 url =("https://twitter.com/twitter/statuses/" + str(tweet_id))
-                tweet_text = ("I see you're talking about Joe. He likes that." % (str(user)))
+                tweet_text = ("I see you're talking about Joe. He likes that.")
                 quote_tweet(tweet_text, url)
     
     return()

@@ -37,6 +37,48 @@ def get_mentions(user_id):
 #*****************************************************************************
 #                    PUT THE CODE YOU'RE TESTING HERE
 #*****************************************************************************
+since_id = 1554598110957125634
+def feature_request():
+    # Allows users to request features. 
+    tweets = client.search_recent_tweets(query="@JoeOnisickBot dick pics",expansions='author_id',max_results=100,since_id=since_id)
+    #tweets = client.search_recent_tweets(query="@JoeOnisickBot feature request",expansions='author_id',max_results=100,since_id=since_id)
+    
+    users = {u["id"]: u for u in tweets.includes['users']}
+    for tweet in tweets.data:
+        if users[tweet.author_id]:
+            user = users[tweet.author_id]
+            tweet_id = tweet.id
+
+    return()
+
+#feature_request()
+username = "JoeOnisickBot"
+user,user_id = get_user(client, username)
+mentions = get_mentions(user_id)
+
+# for tweet in mentions.data:
+#     tweet_id = tweet.id
+#     tweet_text = tweet.text
+#     author = tweet.author_id
+    #print("%s was sent by User ID: %s, with Tweet ID: %s" % (tweet_text, author, tweet_id))
+    #name = mentions.includes
+    #username = 
+    #print("The User Details for that tweet are: Name: %s, and Username%s" % ())
+    #print(mentions.includes['users'])
+
+tweet_data = {}
+for tweet in mentions.data:
+    tweet_data[tweet.id] = {"user_id":tweet.author_id, "tweet_text":tweet.text}
+
+for user in mentions.includes['users']:
+    for key in tweet_data:
+        if tweet_data[key]["user_id"] == user.id:
+            tweet_data[key]["username"] = user.username
+            tweet_data[key]["name"] = user.name
+print(tweet_data[1556257587070488576]['tweet_text'])
+
+
+
 
 
 #*****************************************************************************
