@@ -1,5 +1,5 @@
-@%s You mentioned me! Unfortunately, now I must follow you like a stray dog.
-@%s I hope you're a good leader, because I'm following you now.
-@%s I've got nothing better going on, so I'm going to follow you.
-@%s I'm following you now. It's like winning the lottery, but not at all like that.
-@%s What do you want for your birthday? Too bad, you got me following you instead.
+You mentioned me! Unfortunately, now I must follow you like a stray dog.
+I hope you're a good leader, because I'm following you now.
+I've got nothing better going on, so I'm going to follow you.
+I'm following you now. It's like winning the lottery, but not at all like that.
+What do you want for your birthday? Too bad, you got me following you instead.

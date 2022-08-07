@@ -107,6 +107,8 @@ def commit_and_tweet(commit_message):
     return()
 
 #send_tweet("")
-#send_tweet_with_photo("")
-#commit_and_tweet("")
+#send_tweet_reply()
+#send_tweet_reply_with_with_photo()
+#quote_tweet()
+commit_and_tweet("Added Using_Tweepy_Objects.md which begins to explain the nightmare that is Tweepy.")
 

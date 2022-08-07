@@ -49,7 +49,7 @@ def follow_mention(client, user_id, mentions):
                 client.follow_user(mentions.includes['users'][list_count].id)
                 tweet_id = mentions.data[1].id
                 response = random.choice(follow_responses) #choose random response
-                tweet_text = ("@%s %S" % (str(mentions.includes['users'][list_count].username), str(response)))
+                tweet_text = ("@%s %s" % (str(mentions.includes['users'][list_count].username), str(response)))
                 client.create_tweet(text=tweet_text, in_reply_to_tweet_id=tweet_id) 
                 print(tweet_text)
         list_count += 1
@@ -138,7 +138,7 @@ def check_photo_requests():
             if "joe" and "alive" in tweet.text.lower(): 
                 image_type = joe_lives_photos
                 name = "Joe"
-            elif "send" and "cows" in tweet.text.lower(): 
+            elif "send" and "cow" in tweet.text.lower(): 
                 image_type = cow_photos
                 name = "cow"
             elif "send" and "food" in tweet.text.lower(): 
@@ -208,12 +208,12 @@ def main():
             check_mentions(client, user_id)
             check_photo_requests()
             print("While Loop Count: %s" % count)
-            if count == 1 or count % 90 == 0:
-                tweet_lyrics() #tweets random song lyrics every 3 hours
+            if count == 5 or count % 45 == 0:
+                tweet_lyrics() #tweets random song lyrics every ~90 minutes
             time.sleep(120)
             count += 1
-        except (RemoteDisconnected, ConnectionError):
-            print("Error handled via retry: RemoteDisconnected or Connection Error.")
+        except (RemoteDisconnected, ConnectionError, ConnectionAbortedError):
+            print("Error handled via retry: RemoteDisconnected, Connection Aborted, or Connection Error.")
             main()
 
 if __name__ == "__main__":

@@ -1,1 +1,1 @@
-@JoeOnisickBot ("Joe" "Alive?" OR "Send" "cows" OR "Send" "food" OR "Send" "ranch" OR "Send" "dog")
+@JoeOnisickBot ("Joe" "Alive" OR "Send" "cow" OR "Send" "food" OR "Send" "ranch" OR "Send" "dog")
