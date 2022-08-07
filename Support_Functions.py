@@ -108,5 +108,5 @@ def commit_and_tweet(commit_message):
 
 #send_tweet("")
 #send_tweet_with_photo("")
-commit_and_tweet("Added function to stalk the use of #JoeOnisick hashtag and retweet it with reply. Added reply function.")
+#commit_and_tweet("")
 
