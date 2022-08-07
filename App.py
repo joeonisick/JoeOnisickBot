@@ -46,9 +46,10 @@ def follow_mention(client, user_id, mentions):
         if (mentions.includes['users'][list_count].id) not in followed:
             if (mentions.includes['users'][list_count].id) != user_id:
                 client.follow_user(mentions.includes['users'][list_count].id)
+                tweet_id = mentions.data[1].id
                 response = random.choice(follow_responses) #choose random response
                 tweet_text = (str(response) % str((mentions.includes['users'][list_count].username)))
-                client.create_tweet(text=tweet_text) 
+                client.create_tweet(text=tweet_text, in_reply_to_tweet_id=tweet_id) 
                 print(tweet_text)
         list_count += 1
     print("End follow_mentions.")

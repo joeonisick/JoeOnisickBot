@@ -90,5 +90,5 @@ def commit_and_tweet(commit_message):
 
 #send_tweet("")
 #send_tweet_with_photo("")
-commit_and_tweet("Added variety to the follow responses. Added a function to occaisonally tweet out of context lyrics")
+#commit_and_tweet("")
 

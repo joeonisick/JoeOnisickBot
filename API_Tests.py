@@ -38,7 +38,7 @@ mentions = client.get_users_mentions(id=user_id,expansions='author_id',\
 
 mentions = client.get_users_mentions(id=user_id,expansions='author_id',\
         max_results=100,since_id=since_id)
-print(mentions.data)
+print(mentions.data[1].id)
 
 
 
