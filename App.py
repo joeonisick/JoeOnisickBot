@@ -179,12 +179,14 @@ def tweet_lyrics():
 
 def stalk_joeonisick():
     #searches for the hashtag #JoeOnisick and retweets it with message
-    with open('since_id.txt', 'r') as tmp_text: # Search for the hashtag
-        since_id = tmp_text.read()
+    with open('stalk_since.txt', 'r') as tmp_text: # Search for the hashtag
+        stalk_since = int(tmp_text.read())
 
     tweets = client.search_recent_tweets(query="#JoeOnisick",\
-    expansions='author_id',max_results=100,since_id=since_id)
+    expansions='author_id',max_results=100,since_id=stalk_since)
     
+    if tweets.meta['result_count'] == 0:
+        return()
     users = {u["id"]: u for u in tweets.includes['users']}
     for tweet in tweets.data:
         if users[tweet.author_id]:
@@ -194,7 +196,38 @@ def stalk_joeonisick():
                 url =("https://twitter.com/twitter/statuses/" + str(tweet_id))
                 tweet_text = ("I see you're talking about Joe. He likes that.")
                 quote_tweet(tweet_text, url)
+    with open('stalk_since.txt', 'w') as tmp_text: # Search for the hashtag
+        tmp_text.write(str(stalk_since))
     
+    return()
+
+def feature_request():
+    # Allows users to request features. 
+    
+    with open('feature_since.txt', 'r') as feature_since:
+        feature_since = int(feature_since.read())
+    
+    tweets = client.search_recent_tweets(query="@JoeOnisickBot feature request"\
+        ,expansions='author_id',max_results=100,since_id=feature_since)
+    
+    users = {u["id"]: u for u in tweets.includes['users']}
+    
+    with open('feature_responses.txt', 'r') as responses:
+        responses = responses.read().split("\n")
+    
+    for tweet in tweets.data:
+        if users[tweet.author_id]:
+            user = users[tweet.author_id]
+            tweet_id = tweet.id
+            response = random.choice(responses)
+            status = ("@%s %s" % (user, response))
+            
+            with open('feature_requests.txt', 'a') as requests:
+                requests.write(str(tweet.text) + "\n")
+            with open('feature_since.txt', 'w') as feature_since:
+                feature_since.write(str(tweet_id))
+            send_tweet_reply(status, tweet_id)
+            print(status)
     return()
 
 def main():
@@ -208,8 +241,8 @@ def main():
             check_mentions(client, user_id)
             check_photo_requests()
             print("While Loop Count: %s" % count)
-            if count == 5 or count % 45 == 0:
-                tweet_lyrics() #tweets random song lyrics every ~90 minutes
+            if count == 25 or count % 50 == 1500:
+                tweet_lyrics() #tweets random song lyrics every ~2 days
             time.sleep(120)
             count += 1
         except (RemoteDisconnected, ConnectionError, ConnectionAbortedError):

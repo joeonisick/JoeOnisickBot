@@ -110,5 +110,5 @@ def commit_and_tweet(commit_message):
 #send_tweet_reply()
 #send_tweet_reply_with_with_photo()
 #quote_tweet()
-#commit_and_tweet("")
+commit_and_tweet("Feature added: Feature Request. Also minor formatting updates to ReadMe and Using_Tweepy_Objects.")
 

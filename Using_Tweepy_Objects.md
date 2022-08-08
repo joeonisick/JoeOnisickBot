@@ -1,6 +1,6 @@
 # Using Tweepy Objects
 
-This Document Describes Using the Tweepy Objects as I understand them. I make no claims to accuracy, this is simply what I've learned that works for using them. If you just want to skip to the part that jelps you fix your code, I understand. Here you go: https://github.com/joeonisick/JoeOnisickBot/blob/main/Using_Tweepy_Objects.md#shut-up-and-give-me-the-answer-you-longwinded-moron.
+This Document Describes Using the Tweepy Objects as I understand them. I make no claims to accuracy, this is simply what I've learned that works for using them. If you just want to skip to the part that helps you fix your code, I understand. Here you go: https://github.com/joeonisick/JoeOnisickBot/blob/main/Using_Tweepy_Objects.md#shut-up-and-give-me-the-answer-you-longwinded-moron.
 
 ## Tweepy Client Class
 

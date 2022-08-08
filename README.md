@@ -39,7 +39,7 @@ To use the project you will need the following files:
 
 ## Contributing
 
-Contirubtions to this project are welcome. Be warned in advance that the project owner is clueless as to how to manage a project. If you'd like to contribute you may have to coach him through the process. By coach I mean, treat him like a very dumb child.
+Contributions to this project are welcome. Be warned in advance that the project owner is clueless as to how to manage a project. If you'd like to contribute you may have to coach him through the process. By coach I mean, treat him like a very dumb child.
 
 ## Versioning
 
