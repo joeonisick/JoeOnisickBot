@@ -38,37 +38,6 @@ def get_mentions(user_id):
 #                    PUT THE CODE YOU'RE TESTING HERE
 #*****************************************************************************
 
-def feature_request():
-    # Allows users to request features. 
-    
-    with open('feature_since.txt', 'r') as feature_since:
-        feature_since = int(feature_since.read())
-    
-    tweets = client.search_recent_tweets(query="@JoeOnisickBot feature request"\
-        ,expansions='author_id',max_results=100,since_id=feature_since)
-    
-    users = {u["id"]: u for u in tweets.includes['users']}
-    
-    with open('feature_responses.txt', 'r') as responses:
-        responses = responses.read().split("\n")
-    
-    for tweet in tweets.data:
-        if users[tweet.author_id]:
-            user = users[tweet.author_id]
-            tweet_id = tweet.id
-            response = random.choice(responses)
-            status = ("@%s %s" % (user, response))
-            
-            with open('feature_requests.txt', 'a') as requests:
-                requests.write(str(tweet.text) + "\n")
-            with open('feature_since.txt', 'w') as feature_since:
-                feature_since.write(str(tweet_id))
-            #send_tweet_reply(status, tweet_id)
-            print(status)
-    return()
-
-feature_request()
-
 
 
 

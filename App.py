@@ -240,6 +240,7 @@ def main():
             stalk_joeonisick()
             check_mentions(client, user_id)
             check_photo_requests()
+            feature_request()
             print("While Loop Count: %s" % count)
             if count == 25 or count % 50 == 1500:
                 tweet_lyrics() #tweets random song lyrics every ~2 days
