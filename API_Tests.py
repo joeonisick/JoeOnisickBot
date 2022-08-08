@@ -6,7 +6,7 @@ import tweepy
 import random
 from secrets import declare_secrets
 from Support_Functions import send_tweet, send_tweet_reply_with_photo, send_tweet_reply, get_user
-from App import retrieve_image
+from App import retrieve_image, write_since, read_since
 
 #provide keys and file locations
 bearer_token, consumer_key,consumer_secret,access_token,access_token_secret, \
@@ -40,6 +40,8 @@ def get_mentions(user_id):
 
 
 
+
+write_since(1556684917551108097,'mentions')
 
 
 

@@ -1,0 +1,13 @@
+To interact, mention me using key words:
+Proof of life: 'Joe' & 'Alive'
+
+For photos use 'send' and type'.
+Types: cow, food, ranch, dog
+
+Examples:
+'Is Joe Alive?'
+'I hope Joe's not alive.'
+'send me cows'
+'Send food NOW!'
+'Send Ranch pics'
+'Send dogs'

@@ -1,13 +1,11 @@
 #Never gonna give you up 
-from http.client import HTTPSConnection, RemoteDisconnected
-from socket import socket
-import tweepy
-import random
-import os
-import time
+from http.client import RemoteDisconnected
+import tweepy # Twitter API access module
+import random # Random Choices
+import os # File access
+import time # wait, etc.
+import pickle # Read/Write binary files to persistently store vars
 from secrets import declare_secrets
-
-from urllib3 import HTTPSConnectionPool
 from Support_Functions import get_user, send_tweet, \
     send_tweet_reply_with_photo, send_tweet_reply, quote_tweet
 
@@ -32,31 +30,42 @@ client = tweepy.Client(
 def follow_mention(client, user_id, mentions):
     # Follows people that mention the bot if not already following them.
     print("Start follow_mentions.")
+
     # Create a list of user_ids Joe Bot follows
-    following = client.get_users_following(user_id,max_results=1000)
+    following = client.get_users_following(user_id,max_results=50)
     followed = []
 
-    # Store reponses from follow_responses,txt as a list
-    with open('follow_responses.txt', 'r') as responses:
-        follow_responses = responses.read().split("\n")
-   
+    # Create a user ID list of users JoeOnisickBot already follows
     for i in range(0, following.meta['result_count']):
         followed.append(following.data[i].id)
+
+    # Store reponses from follow_responses.txt as a list
+    with open('follow_responses.txt', 'r') as responses:
+        follow_responses = responses.read().split("\n")
 
     # Follow mentions if not already following
     list_count = 0 #index var
     #iterate through the returned data and parse mentions
     for user in mentions.includes['users']:
+        # Verify the user isn't already being followed
         if (mentions.includes['users'][list_count].id) not in followed:
+            # Verify the user isn't JoeOnisickBot
+            # This prevents 'follow self' errors
             if (mentions.includes['users'][list_count].id) != user_id:
+                # Follow the user
                 client.follow_user(mentions.includes['users'][list_count].id)
-                tweet_id = mentions.data[1].id
+                
+                tweet_id = mentions.data[1].id # Gets the tweet ID to reply to.
                 response = random.choice(follow_responses) #choose random response
                 tweet_text = ("@%s %s" % (str(mentions.includes['users']\
                     [list_count].username), str(response)))
+
+                # Create a tweet using the three variable defined above    
                 client.create_tweet(text=tweet_text, in_reply_to_tweet_id=tweet_id) 
                 print(tweet_text)
-        list_count += 1
+
+        list_count += 1 # Update the index number
+
     print("End follow_mentions.")
     return()
 
@@ -67,8 +76,10 @@ def check_mentions(client, user_id):
     # Using the search function it's possible to pull all @'s within limits
 
     # Since_id is set to the newest tweet replied to.
-    with open('since_id.txt', 'r') as tmp_text:
-        since_id = int(tmp_text.read())
+    since_id = read_since("mentions")
+
+    # with open('since_id.txt', 'r') as tmp_text:                  # Test then remove
+    #     since_id = int(tmp_text.read())                          # Test then remove
 
     # Retrieves mentions since (since_id) the last run
     mentions = client.get_users_mentions(id=user_id,expansions='author_id',\
@@ -78,15 +89,19 @@ def check_mentions(client, user_id):
     if mentions.meta['result_count'] == 0:
         return()
 
-    # Stores the newest tweet ID and rewrites since_id file
-    new_since_id = mentions.meta['newest_id']
-    with open('since_id.txt', 'w') as temp_txt:
-        temp_txt.write(str(since_id))
+    # with open('since_id.txt', 'w') as temp_txt:                  # Test then remove
+    #     temp_txt.write(str(since_id))                            # Test then remove
    
     # Follows the person mentioning the bot
+    # Sends them a notifcation reply
     follow_mention(client, user_id, mentions)
+
+    # Stores the newest tweet ID and rewrites since_id file
+    since_id = mentions.meta['newest_id']
+    write_since(since_id, "mentions")
+
     print("End check_mentions.")
-    return(new_since_id)
+    return()
 
 def retrieve_image(image_type):
     # Pulls infor for an image of the specified type
@@ -140,13 +155,16 @@ def check_photo_requests():
     # Uses a .txt file to simplify passing arguments cleanly
     print("Start check_photo_requests.")
     
-    # Photo_since is set to the newest photo sent tweet_id. 
-    with open('photo_since.txt', 'r') as tmp_text:
-        photo_since = int(tmp_text.read())
+    # since_id is set to the newest photo request sent tweet_id. 
+    since_id = read_since("photo")
+
+    # with open('photo_since.txt', 'r') as tmp_text:                     # Test then remove
+    #     photo_since = int(tmp_text.read())                             # Test then remove
     
+    # Pull the query from text to ensure proper string parsing
     with open('photo_query.txt', 'r') as photo_query:
         tweets = client.search_recent_tweets(query=photo_query.read()\
-            ,expansions='author_id',max_results=100,since_id=photo_since)
+            ,expansions='author_id',max_results=100,since_id=since_id)
     
     # Return if the query has no results
     if tweets.meta['result_count'] == 0:
@@ -191,9 +209,14 @@ def check_photo_requests():
             send_tweet_reply_with_photo(text, file, tweet_id)
 
     # Set the since_id to the tweet ID of the latest tweet reply   
-    photo_since = tweets.meta['newest_id']
-    with open('photo_since.txt', 'w') as tmp_text:
-        tmp_text.write(str(photo_since))
+    since_id = tweets.meta['newest_id']
+
+    # Save the new since_id to file
+    write_since(since_id, "photo")
+
+    # with open('photo_since.txt', 'w') as tmp_text:                       # Test then remove
+    #     tmp_text.write(str(photo_since))                                 # Test then remove
+
     print("End check_photo_requests.")
     return()
 
@@ -212,13 +235,15 @@ def stalk_joeonisick():
     #searches for the hashtag #JoeOnisick and retweets it with message
     print("Start stalk_joeonisick")
 
-    # Pulls the tweet ID of the latest joe onisick mention replied to
-    with open('stalk_since.txt', 'r') as tmp_text: # Search for the hashtag
-        stalk_since = int(tmp_text.read())
+    # since_id is set to the tweet ID of newest #JoeOnisick mention replied to.
+    since_id = read_since("stalk")
+
+    # with open('stalk_since.txt', 'r') as tmp_text:                     # Test then delete
+    #     stalk_since = int(tmp_text.read())                             # Test then delete
 
     # Search for #JoeOnisick mentions since the last parsed
     tweets = client.search_recent_tweets(query="#JoeOnisick",\
-    expansions='author_id',max_results=100,since_id=stalk_since)
+    expansions='author_id',max_results=100,since_id=since_id)
     
     # return if the query has no results
     if tweets.meta['result_count'] == 0:
@@ -237,8 +262,13 @@ def stalk_joeonisick():
                 url =("https://twitter.com/twitter/statuses/" + str(tweet_id))
                 tweet_text = ("I see you're talking about Joe. He likes that.")
                 quote_tweet(tweet_text, url)
-    with open('stalk_since.txt', 'w') as tmp_text: # Search for the hashtag
-        tmp_text.write(str(stalk_since))
+
+    since_id = tweets.meta['newest_id']
+    write_since(since_id, "stalk")
+    
+    # with open('stalk_since.txt', 'w') as tmp_text:                         # Test the delete
+    #     tmp_text.write(str(stalk_since))                                   # Test then delete
+    
     print("End stalk_joeonisick")
     return()
 
@@ -247,12 +277,14 @@ def feature_request():
     print("Start feature_request.")
     
     # Get the ID of the last request responded to.
-    with open('feature_since.txt', 'r') as feature_since:
-        feature_since = int(feature_since.read())
+    since_id = read_since("feature")
+
+    # with open('feature_since.txt', 'r') as feature_since:                     # Test then delete
+    #     feature_since = int(feature_since.read())                             # Test then delete
     
     # Search for 'feature' and 'request' Twitter's API treats a space as and.
     tweets = client.search_recent_tweets(query="@JoeOnisickBot feature request"\
-        ,expansions='author_id',max_results=100,since_id=feature_since)
+        ,expansions='author_id',max_results=100,since_id=since_id)
     
     # Return if the query has no results
     if tweets.meta['result_count'] == 0:
@@ -275,11 +307,86 @@ def feature_request():
             
             with open('feature_requests.txt', 'a') as requests:
                 requests.write(str(tweet.text) + "\n")
-            with open('feature_since.txt', 'w') as feature_since:
-                feature_since.write(str(tweet_id))
+
             send_tweet_reply(status, tweet_id)
             print(status)
+
+    # Update the since ID to persistent storage
+    since_id = tweets.meta['newest_id']
+    write_since(since_id, "feature")
+
+    # with open('feature_since.txt', 'w') as feature_since:v              # Test then delete
+    #     feature_since.write(str(tweet_id))                              # Test then delete
+    
     print("End feature_request.")
+    return()
+
+def write_since(since_id, type):
+    # Used to persistently store since_ids to a file.
+    # Pickles the since_ids dictionary.
+    # since_id is the ID to store
+    # Type dictates the dictionary key/since_id use
+    print("Start write_since.")
+
+    # Read the existing dictionary in order to modify it
+    with open('perm_objects/since_ids.pickle', 'rb') as f:
+        since_ids = pickle.load(f)
+        # Modify the corresponding since_ids dict key
+        since_ids[type] = int(since_id)
+        #print(since_ids)
+
+    # Write the dictionary to file
+    with open('perm_objects/since_ids.pickle', 'wb') as f:
+        # Pickle the 'data' dictionary using the highest protocol available.
+        pickle.dump(since_ids, f, pickle.HIGHEST_PROTOCOL)
+
+    print("End write_since.")
+    return()
+
+def read_since(type):
+    # Used to retrieve persistently stored since_ids.
+    # Unpickles the since_ids dictionary.
+    # Type dictates the dictionary key/since_id use
+    print("Start read_since.")
+    
+    # Unpickle and read the file
+    with open('perm_objects/since_ids.pickle', 'rb') as f:
+        since_ids = pickle.load(f)
+        since_id = since_ids[type]
+        #print(since_id)
+    
+    print("End read_since.")
+    return(since_id)
+
+def user_help():
+    # Searches for JoeOnisickBot mentions including 'help' and replies
+
+    # Sets the since_id to the tweet ID of the last request
+    since_id = read_since("help")
+
+    # Search for #JoeOnisick mentions since the last parsed
+    tweets = client.search_recent_tweets(query="@JoeOnisickBot help option", \
+        expansions='author_id',max_results=100,since_id=since_id)
+
+    if tweets.meta['result_count'] == 0:
+        return()
+
+    with open('Interactions.txt', 'r') as tmp_text:
+        tweet_text = tmp_text.read()
+
+    # Iterate through return and parse replies
+    users = {u["id"]: u for u in tweets.includes['users']}
+   
+    for tweet in tweets.data:
+        if users[tweet.author_id]:
+            user = users[tweet.author_id]
+            tweet_id = tweet.id
+            status = ("@%s %s" % (user,tweet_text))
+            print(status)
+            print(tweet_id)
+            #client.create_tweet(text=tweet, in_reply_to_tweet_id=tweet_id)
+    
+    print("Exit user_help")
     return()
 
 def main():
@@ -289,14 +396,17 @@ def main():
     count = 1
     while True:
         try:  
-            stalk_joeonisick() 
+            user_help()
+            stalk_joeonisick()
+            time.sleep(20)
             check_mentions(client, user_id)
+            time.sleep(20)
             check_photo_requests()
+            time.sleep(20)
             feature_request()
             print("While Loop Count: %s" % count) # Tracking
-            if count == 25 or count % 50 == 1500:
+            if count % 1500 == 0:
                 tweet_lyrics() #tweets random song lyrics every ~2 days
-            time.sleep(120)
             count += 1
         
         # Handle connectivity issues gracefully with a restart of main()
@@ -306,3 +416,8 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+#write_since(1556684917551108097, "stalk")
+# print(read_since("mentions"))
+# print(read_since("mentions")<=1556684917551108097)
+

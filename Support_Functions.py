@@ -110,6 +110,6 @@ def commit_and_tweet(commit_message):
 #send_tweet_reply()
 #send_tweet_reply_with_with_photo()
 #quote_tweet()
-#commit_and_tweet("")
+commit_and_tweet("Modified since_id storage to use a dict stored as a single binary file. Added user help function.")
 
 
