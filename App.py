@@ -254,6 +254,10 @@ def feature_request():
     tweets = client.search_recent_tweets(query="@JoeOnisickBot feature request"\
         ,expansions='author_id',max_results=100,since_id=feature_since)
     
+    # Return if the query has no results
+    if tweets.meta['result_count'] == 0:
+        return()
+    
     # Build a list of the users that made requests
     users = {u["id"]: u for u in tweets.includes['users']}
     
