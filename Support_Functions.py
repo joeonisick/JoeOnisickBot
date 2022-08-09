@@ -1,6 +1,7 @@
 import os
 import subprocess
 import tweepy
+import pickle
 from secrets import declare_secrets
 
 #provide keys and file locations
@@ -106,10 +107,49 @@ def commit_and_tweet(commit_message):
     print("Tweet Length Was: %s" % (len(commit_message)))
     return()
 
-#send_tweet("")
-#send_tweet_reply()
-#send_tweet_reply_with_with_photo()
-#quote_tweet()
-commit_and_tweet("Fixed search query bug in user_help.")
+def write_since(since_id, type):
+    # Used to persistently store since_ids to a file.
+    # Pickles the since_ids dictionary.
+    # since_id is the ID to store
+    # Type dictates the dictionary key/since_id use
+    print("Start write_since.")
+
+    # Read the existing dictionary in order to modify it
+    with open('perm_objects/since_ids.pickle', 'rb') as f:
+        since_ids = pickle.load(f)
+        # Modify the corresponding since_ids dict key
+        since_ids[type] = int(since_id)
+        #print(since_ids)
+
+    # Write the dictionary to file
+    with open('perm_objects/since_ids.pickle', 'wb') as f:
+        # Pickle the 'data' dictionary using the highest protocol available.
+        pickle.dump(since_ids, f, pickle.HIGHEST_PROTOCOL)
+
+    print("End write_since.")
+    return()
+
+def read_since(type):
+    # Used to retrieve persistently stored since_ids.
+    # Unpickles the since_ids dictionary.
+    # Type dictates the dictionary key/since_id use
+    print("Start read_since.")
+    
+    # Unpickle and read the file
+    with open('perm_objects/since_ids.pickle', 'rb') as f:
+        since_ids = pickle.load(f)
+        since_id = since_ids[type]
+        #print(since_id)
+    print("End read_since.")
+    return(since_id)
+
+# send_tweet("")
+# send_tweet_reply()
+# send_tweet_reply_with_with_photo()
+# quote_tweet()
+# commit_and_tweet("")
+# write_since()
+# print(read_since(""))
+
 
 

@@ -351,7 +351,6 @@ def read_since(type):
         since_ids = pickle.load(f)
         since_id = since_ids[type]
         #print(since_id)
-    print(since_ids)
     print("End read_since.")
     return(since_id)
 
@@ -364,11 +363,9 @@ def user_help():
 
     # Pull the query from text to ensure proper string parsing
     # Search for #JoeOnisick mentions since the last parsed
-    print("Since ID: %s" % since_id)
     tweets = client.search_recent_tweets(query="@JoeOnisickBot help options"\
         ,expansions='author_id',max_results=100,since_id=since_id)
 
-    print(tweets)
     if tweets.meta['result_count'] == 0:
         return()
 
@@ -382,10 +379,12 @@ def user_help():
             user = users[tweet.author_id]
             tweet_id = tweet.id
             status = ("@%s %s" % (user,tweet_text))
-            print(status)
-            print(tweet_id)
             client.create_tweet(text=tweet_text, in_reply_to_tweet_id=tweet_id)
     
+    # Update the since ID to persistent storage
+    since_id = tweets.meta['newest_id']
+    write_since(since_id, "help")
+
     print("End user_help.")
     return()
 
@@ -417,7 +416,5 @@ def main():
 if __name__ == "__main__":
     main()
 
-#write_since(1556684917551108097, "stalk")
-# print(read_since("mentions"))
-# print(read_since("mentions")<=1556684917551108097)
+
 

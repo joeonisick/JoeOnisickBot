@@ -7,7 +7,7 @@ Types: cow, food, ranch, dog
 Examples:
 'Is Joe Alive?'
 'I hope Joe's not alive.'
-'send me cows'
+'send me cow'
 'Send food NOW!'
-'Send Ranch pics'
-'Send dogs'
+'Send Ranch pic'
+'Send dog'
