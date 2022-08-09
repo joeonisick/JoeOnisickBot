@@ -30,7 +30,7 @@ When I print mentions we see the following:
 ```
 Response(data=[<Tweet id=1556257587070488576 text='@JoeOnisickBot send cow pic'>], includes={'users': [<User id=15830229 name=danedevalcourt username=danedevalcourt>]}, errors=[], meta={'result_count': 1, 'newest_id': '1556257587070488576', 'oldest_id': '1556257587070488576'})
 ```
-Now the fun part. A quick read of this data is pretty straight forword. We've got:
+Now the fun part. A quick read of this data is pretty straight forward. We've got:
 
 Some kind of object called `data` which contains:
 - `Tweet id: 1556257587070488576` (ID of the returned tweet)
@@ -49,7 +49,7 @@ Another called `meta` (no not those privacy destroying goat F'rs) which contains
 
 These two are the same because only one response was returned.
 
-So far so good. The problem is understanding how to access them mystery objects and their data. The bigger problem is understanding how to correlate between these objects. At a glance it looks like `data` returns a list, but `includes` returns a dictionary. Lists can have duplicate items. Dictionaries cannot have duplicate keys. If we had returned more than one tweet, and two or more came from the same user, we'd have varying object lengths, making it hard to correlate a tweet in `data` with a user in `includes`. In this example: if the operation had returned two tweets from ID 15830229, `data` would contain them both, while `includes` would remain the same, containing the one unique instance of that ID and its values.
+So far so good. The problem is understanding how to access those mystery objects and their data. The bigger problem is understanding how to correlate between these objects. At a glance it looks like `data` returns a list, but `includes` returns a dictionary. Lists can have duplicate items. Dictionaries cannot have duplicate keys. If we had returned more than one tweet, and two or more came from the same user, we'd have varying object lengths, making it hard to correlate a tweet in `data` with a user in `includes`. In this example: if the operation had returned two tweets from ID `15830229`, `data` would contain them both, while `includes` would remain the same, containing the one unique instance of that ID and its values.
 
 Let's start by digging into the types of mystery objects we have:
 
@@ -73,7 +73,7 @@ Let's dig down a level:
 - `print(mentions.data)` returns `[<Tweet id=1556257587070488576 text='@JoeOnisickBot send cow pic'>]`
 A Python list containing a single item with what looks like two values. But how do we access seperate values in a list item?
 - `print(mentions.includes)` returns `{'users': [<User id=15830229 name=danedevalcourt username=danedevalcourt>]}`
-A Python dictionary containing a key 'users' paired with another multi-value list.
+A Python dictionary containing a key 'users' paired with another multi-value list item.
 - `print(mentions.errors)` returns `[]`
 Our list of no returned errors.
 - `print(mentions.meta)` returns `{'result_count': 2, 'newest_id': '1556257587070488576', 'oldest_id': '1556257587070488576'}`
@@ -103,7 +103,7 @@ These items are a list of tweepy class objects about the returned tweets. Each i
 - The list items in `mentions.includes['users']`: `print(type(mentions.includes['users'][0]))` which are `<class 'tweepy.user.User'>`
 -- `print(mentions.includes['users'][0])` returns `danedevalcourt`
 
-These items are a list of tweepy class objects about the users. Each inlcudes a user `id`, `name`, and `username` object. Remember, because this is a dictionary, each user will have one unique entry regardless of the number of tweets associated with them.
+These items are a list of tweepy class objects about the users. Each includes a user `id`, `name`, and `username` object. Remember, because this is a dictionary, each user will have one unique entry regardless of the number of tweets associated with them.
 
 - Trying `print(mentions.data.id)` returns an error `AttributeError: 'list' object has no attribute 'id'`
 - But if we provide the list index (0 for our one item list) `print(mentions.data[0].id)` we hit paydirt with the tweet `id`: `1556257587070488576`
@@ -172,9 +172,9 @@ If Tweepy originally returned anything like this, I'd have a week of my life bac
 ### Shut Up and Give me the Answer You Longwinded Moron!
 Here is the quick reference for the code solutions above. They all assume you have used Tweepy to return a Tweepy class stored as `mentions` as in the example code.
 
-- `mentions.data`: Tweet data containing tweet `id` and `test` visibly, and `author_id` pulled from the bowels of hell.
+- `mentions.data`: Tweet data containing tweet `id` and `text` visibly, and `author_id` pulled from the bowels of hell.
 -- `mentions.data[x].id`: returns the tweet `id`
--- `mentions.data[x].text': returns the tweet `text`
+-- `mentions.data[x].text`: returns the tweet `text`
 -- `mentions.data[x].author_id`: crosses the river styx to obtain the `author_id` from the bowels of Satan's, well, bowels.
 - `mentions.includes`: Additional default and optional data about the tweets
 -- `mentions.includes['users'][x].id` resturns the user `id`, not to be confused with the tweet `id` above.

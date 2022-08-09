@@ -143,6 +143,25 @@ def read_since(type):
     print("End read_since.")
     return(since_id)
 
+def get_tweets():
+    # Pulls the last 100 mentions from JoeOnisickBot timeline
+    user_id = 1554986957532438535 #set JoeOnisickBot user id
+
+    # Retireve tweets
+    tweets = client.search_recent_tweets(query="@JoeOnisickBot"\
+        ,expansions='author_id',max_results=50)
+    
+    # Display the tweets
+    users = {u["id"]: u for u in tweets.includes['users']}
+   
+    for tweet in tweets.data:
+        if users[tweet.author_id]:
+            user = users[tweet.author_id]
+            print("@%s sent: %s" % (user, tweet.text))            
+            
+
+        
+
 # send_tweet("")
 # send_tweet_reply()
 # send_tweet_reply_with_with_photo()
@@ -150,6 +169,7 @@ def read_since(type):
 # commit_and_tweet("")
 # write_since()
 # print(read_since(""))
+# get_tweets()
 
 
 
