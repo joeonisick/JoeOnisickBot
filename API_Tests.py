@@ -22,11 +22,11 @@ client = tweepy.Client(
 #common bot variables
 user_id = 1554986957532438535 #set JoeOnisickBot's user id
 
-with open('since_id.txt', 'r') as since_id:
-    since_id = since_id.read()
-# photo_since is set to the oldest photo sent. Since ID is used inclusively.
-with open('photo_since.txt', 'r') as photo_since:
-    photo_since = photo_since.read()
+# with open('since_id.txt', 'r') as since_id:
+#     since_id = since_id.read()
+# # photo_since is set to the oldest photo sent. Since ID is used inclusively.
+# with open('photo_since.txt', 'r') as photo_since:
+#     photo_since = photo_since.read()
 
 def get_mentions(user_id):
     mentions = client.get_users_mentions(id=user_id,expansions='author_id',\
@@ -38,11 +38,14 @@ def get_mentions(user_id):
 #                    PUT THE CODE YOU'RE TESTING HERE
 #*****************************************************************************
 
+auth = tweepy.OAuth1UserHandler(
+    consumer_key, access_token, access_token_secret,
+)
 
+api = tweepy.API(auth) 
 
-
-write_since(1556684917551108097,'mentions')
-
+friend = api.lookup_friendships(screen_name="hugoslabbert", user_id=[1554986957532438535])
+print(friend)
 
 
 

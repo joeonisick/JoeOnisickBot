@@ -55,13 +55,13 @@ def follow_mention(client, user_id, mentions):
                 # Follow the user
                 client.follow_user(mentions.includes['users'][list_count].id)
                 
-                tweet_id = mentions.data[1].id # Gets the tweet ID to reply to.
+                tweet_id = mentions.data[list_count].id # Gets the tweet ID to reply to.
                 response = random.choice(follow_responses) #choose random response
                 tweet_text = ("@%s %s" % (str(mentions.includes['users']\
                     [list_count].username), str(response)))
 
                 # Create a tweet using the three variable defined above    
-                client.create_tweet(text=tweet_text, in_reply_to_tweet_id=tweet_id) 
+                #client.create_tweet(text=tweet_text, in_reply_to_tweet_id=tweet_id)  Need logic that doesn't suck
                 print(tweet_text)
 
         list_count += 1 # Update the index number
@@ -157,9 +157,6 @@ def check_photo_requests():
     
     # since_id is set to the newest photo request sent tweet_id. 
     since_id = read_since("photo")
-
-    # with open('photo_since.txt', 'r') as tmp_text:                     # Test then remove
-    #     photo_since = int(tmp_text.read())                             # Test then remove
     
     # Pull the query from text to ensure proper string parsing
     with open('photo_query.txt', 'r') as photo_query:
@@ -354,26 +351,29 @@ def read_since(type):
         since_ids = pickle.load(f)
         since_id = since_ids[type]
         #print(since_id)
-    
+    print(since_ids)
     print("End read_since.")
     return(since_id)
 
 def user_help():
     # Searches for JoeOnisickBot mentions including 'help' and replies
+    print("Start user_help.")
 
     # Sets the since_id to the tweet ID of the last request
-    since_id = read_since("help")
+    since_id = read_since('help')
 
+    # Pull the query from text to ensure proper string parsing
     # Search for #JoeOnisick mentions since the last parsed
-    tweets = client.search_recent_tweets(query="@JoeOnisickBot help option", \
-        expansions='author_id',max_results=100,since_id=since_id)
+    print("Since ID: %s" % since_id)
+    tweets = client.search_recent_tweets(query="@JoeOnisickBot help options"\
+        ,expansions='author_id',max_results=100,since_id=since_id)
 
+    print(tweets)
     if tweets.meta['result_count'] == 0:
         return()
 
     with open('Interactions.txt', 'r') as tmp_text:
         tweet_text = tmp_text.read()
-
     # Iterate through return and parse replies
     users = {u["id"]: u for u in tweets.includes['users']}
    
@@ -384,9 +384,9 @@ def user_help():
             status = ("@%s %s" % (user,tweet_text))
             print(status)
             print(tweet_id)
-            #client.create_tweet(text=tweet, in_reply_to_tweet_id=tweet_id)
+            client.create_tweet(text=tweet_text, in_reply_to_tweet_id=tweet_id)
     
-    print("Exit user_help")
+    print("End user_help.")
     return()
 
 def main():
@@ -405,7 +405,7 @@ def main():
             time.sleep(20)
             feature_request()
             print("While Loop Count: %s" % count) # Tracking
-            if count % 1500 == 0:
+            if count % 3000 == 0:
                 tweet_lyrics() #tweets random song lyrics every ~2 days
             count += 1
         
