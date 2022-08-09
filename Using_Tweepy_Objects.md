@@ -176,10 +176,10 @@ Here is the quick reference for the code solutions above. They all assume you ha
 -- `mentions.data[x].id`: returns the tweet `id`
 -- `mentions.data[x].text`: returns the tweet `text`
 -- `mentions.data[x].author_id`: crosses the river styx to obtain the `author_id` from the bowels of Satan's, well, bowels.
-- `mentions.includes`: Additional default and optional data about the tweets
+- `mentions.includes`: Additional default and optional data about the tweets.
 -- `mentions.includes['users'][x].id` resturns the user `id`, not to be confused with the tweet `id` above.
--- `mentions.includes['users'][x].name` returns the name of the user (this is not username)
--- `mentions.includes['users'][x].username` returns the username (handle) of the user
+-- `mentions.includes['users'][x].name` returns the name of the user (this is not username).
+-- `mentions.includes['users'][x].username` returns the username (handle) of the user.
 
 If you want to match values from `mentions.data` with values from `mentions.includes` you'll match data's `author_id` with includes' `id`. As an added bonus you must ensure you ask nicely for the `author_id` by placing `expansions='author_id'` in the call to invoke the Tweepy client god. I recommend a standard sacrifice of your choice to accompany the call.
 
