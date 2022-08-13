@@ -196,4 +196,4 @@ for user in mentions.includes['users']:
             tweet_data[key]["name"] = user.name
 ```
 
-If you read all this. I'm very sorry for your loss. Well that's a lie, the sorry part at least.
+If you read all this. I'm very sorry for your loss. Well that's a lie, the sorry part at least. Hope it helps.
