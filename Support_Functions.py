@@ -244,7 +244,7 @@ def print_tweets(tweets):
 # send_tweet_reply()
 # send_tweet_reply_with_with_photo()
 # quote_tweet()
-commit_and_tweet("App.py & Support_Functions.py code rewrite to reduce API calls, processing time, and file read/write time")
+# commit_and_tweet("")
 # write_since()
 # print(read_since(""))
 # get_tweets()
