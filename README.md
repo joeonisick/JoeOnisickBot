@@ -23,11 +23,9 @@ To use the project you will need the following files:
 - App.py: Contains the main program functions. This is the file you will run to start the bot.
 - Support_Functions.py: This file contains functions used by the program, as well as some functions for maintenance and support.
   - General functions like send_tweet live here and are called by App.py. Other functions like commit_and_tweet can be used here as desired.
-- photo_query.txt:  used to store the query string for photo requests to pass to Twitter. A text file is used to ensure accurate string passing.
-- follow_reponses.txt: used to store a list of responses that can be randomly used to generate tweets after following someone
-- song_lyrics: used to store out of context lyrics used by a function to tweet a random one every ~3 hours.
-- photo_since.txt:  stores latest tweet id of the last photo replied to. Stored to text to save across program runs. Will be created by the app.
-- since_id: stored latest tweet id of the last mention followed. Stored to text to save across program runs. Will be created by the app.
+- perm_objects\new_since_id.pickle: binary file used to store Twitter since_id persistently
+- Response_Options\follow_reponses.txt: used to store a list of responses that can be randomly used to generate tweets after following someone
+- perm_objects\song_lyrics: used to store out of context lyrics used by a function to tweet a random one every ~3 hours.
 - secrets.py: ENSURE THIS IS IN YOUR .gitignore. This declares API keys and file locations returning them from a function.
 - Example_Secrets: Example Secrets files with placeholders for your keys and directories. Rename and add to .gitignore before adding keys.
 - Using_Tweepy_Objects.md: When you start pulling your hair out using Tweepy, start here (seriously, before you go anywhere else.)
