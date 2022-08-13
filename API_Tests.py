@@ -38,14 +38,7 @@ def get_mentions(user_id):
 #                    PUT THE CODE YOU'RE TESTING HERE
 #*****************************************************************************
 
-auth = tweepy.OAuth1UserHandler(
-    consumer_key, access_token, access_token_secret,
-)
 
-api = tweepy.API(auth) 
-
-friend = api.lookup_friendships(screen_name="hugoslabbert", user_id=[1554986957532438535])
-print(friend)
 
 
 

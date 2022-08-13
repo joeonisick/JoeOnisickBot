@@ -1,4 +1,5 @@
 import os
+import random
 import subprocess
 import tweepy
 import pickle
@@ -19,6 +20,54 @@ def get_user(client, screen_name):
     user_id = user.data[0].id #isolates the unique ID for the user as a var
     print("End get_user.")
     return(user, user_id)
+
+def retrieve_next_image(image_type):
+    # Pulls info for an image of the specified type
+    # supported image_types are: 
+    # ranch, joe_lives_photos, cow_photos, food_photos, dog_photos
+    print("Start retreive_image.")
+    
+    image_list = []
+
+    #for joe_lives_photos pull the latest, else pull random
+    if image_type == joe_lives_photos:
+        for file in os.listdir(image_type):
+            if file.endswith(".jpg"):
+                image_list.append(file)
+        image_list.sort(reverse=True)
+        picture = image_list[0]
+    else:
+        for file in os.listdir(image_type):
+            if file.endswith(".jpg"):
+                image_list.append(file)
+                picture = random.choice(image_list)
+    
+    # Set varibles, parsing date/time from file name
+    file = str(image_type + "\\" + picture)
+    year = picture[0:4]
+    month = picture[4:6]
+    day = picture[6:8]
+    
+    # Convert 24 hour time to 12 hour time
+    if int(picture[9:11]) > 12:
+        hour = str(int(picture[9:11]) - 12)
+        period = "PM"
+    else:
+        hour = picture[9:11]
+        period = "AM"
+    minute = picture[11:13]
+    timestamp = ("%s/%s/%s - %s:%s %s" % \
+        (month, day, year, hour, minute, period))
+
+    # Gracefully handle I/O Errors
+    try:
+        photo = open(file)
+        photo.close()
+    except IOError:
+        print("File not found.")
+        return()
+    print("End retreive_image.")
+    return(file, timestamp)
 
 def send_tweet(tweet_text):
 #prepares a tweet to send.
@@ -107,7 +156,21 @@ def commit_and_tweet(commit_message):
     print("Tweet Length Was: %s" % (len(commit_message)))
     return()
 
-def write_since(since_id, type):
+def read_since_id(type): # Replaces read_since after testing and beta code release
+    # Used to retrieve persistently stored since_ids.
+    # Unpickles the since_ids dictionary.
+    # Type dictates the dictionary key/since_id use
+    print("Start read_since.")
+    
+    # Unpickle and read the file
+    with open('perm_objects/new_since_id.pickle', 'rb') as f:
+        since_ids = pickle.load(f)
+        since_id = since_ids[type]
+        #print(since_id)
+    print("End read_since.")
+    return(since_id)
+
+def write_since_id(since_id, type):
     # Used to persistently store since_ids to a file.
     # Pickles the since_ids dictionary.
     # since_id is the ID to store
@@ -115,61 +178,75 @@ def write_since(since_id, type):
     print("Start write_since.")
 
     # Read the existing dictionary in order to modify it
-    with open('perm_objects/since_ids.pickle', 'rb') as f:
+    with open('perm_objects/new_since_id.pickle', 'rb') as f:
         since_ids = pickle.load(f)
         # Modify the corresponding since_ids dict key
         since_ids[type] = int(since_id)
-        #print(since_ids)
 
     # Write the dictionary to file
-    with open('perm_objects/since_ids.pickle', 'wb') as f:
+    with open('perm_objects/new_since_id.pickle', 'wb') as f:
         # Pickle the 'data' dictionary using the highest protocol available.
         pickle.dump(since_ids, f, pickle.HIGHEST_PROTOCOL)
 
     print("End write_since.")
     return()
 
-def read_since(type):
-    # Used to retrieve persistently stored since_ids.
-    # Unpickles the since_ids dictionary.
-    # Type dictates the dictionary key/since_id use
-    print("Start read_since.")
-    
-    # Unpickle and read the file
-    with open('perm_objects/since_ids.pickle', 'rb') as f:
-        since_ids = pickle.load(f)
-        since_id = since_ids[type]
-        #print(since_id)
-    print("End read_since.")
-    return(since_id)
-
-def get_tweets():
-    # Pulls the last 100 mentions from JoeOnisickBot timeline
-    user_id = 1554986957532438535 #set JoeOnisickBot user id
+def get_tweets(since_id):
+    # Pulls the last 100 new mentions from JoeOnisickBot timeline
+    print("Start get_tweets")
 
     # Retireve tweets
     tweets = client.search_recent_tweets(query="@JoeOnisickBot"\
-        ,expansions='author_id',max_results=50)
+        ,expansions='author_id',max_results=100, since_id=since_id)
     
+    print("End get_tweets")
+    return(tweets)
+            
+def get_hashtag(hashtag, since_id):
+    # Search for a hashtag and return the tweets class object
+    print("Start get_hashtag")
+
+    # Search for #JoeOnisick mentions since the last parsed
+    tweets = client.search_recent_tweets(query=hashtag,\
+    expansions='author_id',max_results=100,since_id=since_id)
+
+    print("End get_hashtag")
+    return(tweets)
+        
+def print_tweets(tweets):
+    # Print tweets in tweets
+    print("Start print_tweets")
+
+    # Print no tweets if no results returned
+    if tweets.meta['result_count'] == 0:
+        print('\n'*3)
+        print('*'*5 + ' No tweets to display ' + '*'*5)
+        print('\n'*3)
+        return()
+
     # Display the tweets
     users = {u["id"]: u for u in tweets.includes['users']}
    
+    print('\n'*3)
     for tweet in tweets.data:
         if users[tweet.author_id]:
             user = users[tweet.author_id]
-            print("@%s sent: %s" % (user, tweet.text))            
-            
+            name = users[tweet.author_id].name
+            print('\n%s (@%s)' % (name, user))
+            print(tweet.text)
+            print('Tweet ID: %s' % tweet.id)
 
-        
+    print('\n')
+    print("End print_tweets")
+    return()
 
 # send_tweet("")
 # send_tweet_reply()
 # send_tweet_reply_with_with_photo()
 # quote_tweet()
-# commit_and_tweet("")
+commit_and_tweet("App.py & Support_Functions.py code rewrite to reduce API calls, processing time, and file read/write time")
 # write_since()
 # print(read_since(""))
 # get_tweets()
-
 
 
